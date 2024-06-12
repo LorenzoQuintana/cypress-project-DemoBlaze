@@ -1,15 +1,12 @@
-name: Cypress Tests
+name: Smoke Tests on Pull Request
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
-      - main
+      - '**' 
 
 jobs:
-  test:
+  smoke-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,11 +17,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
-      
+
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests
-        run: npm run cy:run
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: Run smoke tests
+        run: npm run cy:run:smoke
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: smoke-test-results
+          path: cypress/results 
